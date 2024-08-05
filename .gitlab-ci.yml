@@ -1,0 +1,17 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy:
+  stage: deploy
+  script:
+    - microk8s.kubectl set image deployment/flask-ping-app flask-ping-app=$CI_REGISTRY_IMAGE:latest
+  only:
+    - master
+
